@@ -12,22 +12,32 @@ The official SDK for building Orkestrate publisher agents.
 
 [Orkestrate](https://orkestrate.space) is an AI agent gateway. Coding tools like Cursor, Claude Code, and VS Code connect to it via MCP and discover agents published by companies like yours. Callers bring their own model (BYOM) — you just handle the turn.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://mermaid.ink/svg/c2VxdWVuY2VEaWFncmFtCiAgICBwYXJ0aWNpcGFudCBDb2RlciBhcyBDb2RpbmcgdG9vbCAoQ3Vyc29yLCBldGMuKQogICAgcGFydGljaXBhbnQgR1cgYXMgT3JrZXN0cmF0ZSBHYXRld2F5IChvcmtlc3RyYXRlLnNwYWNlKQogICAgcGFydGljaXBhbnQgQWdlbnQgYXMgWW91ciBQdWJsaXNoZXIgQWdlbnQKICAgIHBhcnRpY2lwYW50IExMTSBhcyBMTE0gKGNhbGxlcidzIEFQSSBrZXkpCgogICAgQ29kZXItPj5HVzogTUNQIHJlcXVlc3QgKEJZT00gY29uZmlnKQogICAgR1ctPj5HVzogQXV0aCwgcm91dGluZywgc2Vzc2lvbiBtYW5hZ2VtZW50CiAgICBHVy0-PkFnZW50OiBQT1NUIC9hcGkvb3JrZXN0cmF0ZSBBdXRob3JpemF0aW9uOiBCZWFyZXIgWC1Pcmtlc3RyYXRlLUFjdGlvbiBYLU9ya2VzdHJhdGUtTW9kZWwgKGJhc2U2NHVybCkKICAgIEFnZW50LT4-QWdlbnQ6IHZlcmlmeVJlcXVlc3QoKSBwYXJzZVJlcXVlc3QoKSBidWlsZE1vZGVsKCkKICAgIEFnZW50LT4-TExNOiBnZW5lcmF0ZVRleHQoKSAoY2FsbGVyJ3Mga2V5KQogICAgTExNLS0-PkFnZW50OiByZXNwb25zZQogICAgQWdlbnQtLT4-R1c6IHsgcmVwbHk6ICIuLi4iIH0KICAgIEdXLS0-PkNvZGVyOiBNQ1AgcmVzcG9uc2U?theme=dark">
+  <img alt="Orkestrate architecture diagram" src="https://mermaid.ink/svg/c2VxdWVuY2VEaWFncmFtCiAgICBwYXJ0aWNpcGFudCBDb2RlciBhcyBDb2RpbmcgdG9vbCAoQ3Vyc29yLCBldGMuKQogICAgcGFydGljaXBhbnQgR1cgYXMgT3JrZXN0cmF0ZSBHYXRld2F5IChvcmtlc3RyYXRlLnNwYWNlKQogICAgcGFydGljaXBhbnQgQWdlbnQgYXMgWW91ciBQdWJsaXNoZXIgQWdlbnQKICAgIHBhcnRpY2lwYW50IExMTSBhcyBMTE0gKGNhbGxlcidzIEFQSSBrZXkpCgogICAgQ29kZXItPj5HVzogTUNQIHJlcXVlc3QgKEJZT00gY29uZmlnKQogICAgR1ctPj5HVzogQXV0aCwgcm91dGluZywgc2Vzc2lvbiBtYW5hZ2VtZW50CiAgICBHVy0-PkFnZW50OiBQT1NUIC9hcGkvb3JrZXN0cmF0ZSBBdXRob3JpemF0aW9uOiBCZWFyZXIgWC1Pcmtlc3RyYXRlLUFjdGlvbiBYLU9ya2VzdHJhdGUtTW9kZWwgKGJhc2U2NHVybCkKICAgIEFnZW50LT4-QWdlbnQ6IHZlcmlmeVJlcXVlc3QoKSBwYXJzZVJlcXVlc3QoKSBidWlsZE1vZGVsKCkKICAgIEFnZW50LT4-TExNOiBnZW5lcmF0ZVRleHQoKSAoY2FsbGVyJ3Mga2V5KQogICAgTExNLS0-PkFnZW50OiByZXNwb25zZQogICAgQWdlbnQtLT4-R1c6IHsgcmVwbHk6ICIuLi4iIH0KICAgIEdXLS0-PkNvZGVyOiBNQ1AgcmVzcG9uc2U">
+</picture>
+
+<details>
+<summary>Diagram source (Mermaid)</summary>
+
 ```mermaid
 sequenceDiagram
     participant Coder as Coding tool (Cursor, etc.)
-    participant GW as Orkestrate Gateway<br/>(orkestrate.space)
+    participant GW as Orkestrate Gateway (orkestrate.space)
     participant Agent as Your Publisher Agent
     participant LLM as LLM (caller's API key)
 
     Coder->>GW: MCP request (BYOM config)
-    GW->>GW: Auth, routing,<br/>session management
-    GW->>Agent: POST /api/orkestrate<br/>Authorization: Bearer<br/>X-Orkestrate-Action<br/>X-Orkestrate-Model (base64url)
-    Agent->>Agent: verifyRequest()<br/>parseRequest()<br/>buildModel()
+    GW->>GW: Auth, routing, session management
+    GW->>Agent: POST /api/orkestrate Authorization: Bearer X-Orkestrate-Action X-Orkestrate-Model (base64url)
+    Agent->>Agent: verifyRequest() parseRequest() buildModel()
     Agent->>LLM: generateText() (caller's key)
     LLM-->>Agent: response
     Agent-->>GW: { reply: "..." }
     GW-->>Coder: MCP response
 ```
+
+</details>
 
 You deploy a single HTTP endpoint. The gateway handles everything else: caller auth, session management, rate limits, turn tracking. Your job is one function: receive a message, run your agent, return a reply.
 
