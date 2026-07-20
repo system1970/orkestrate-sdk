@@ -12,21 +12,22 @@ The official SDK for building Orkestrate publisher agents.
 
 [Orkestrate](https://orkestrate.space) is an AI agent gateway. Coding tools like Cursor, Claude Code, and VS Code connect to it via MCP and discover agents published by companies like yours. Callers bring their own model (BYOM) — you just handle the turn.
 
+```mermaid
+sequenceDiagram
+    participant Coder as Coding tool (Cursor, etc.)
+    participant GW as Orkestrate Gateway<br/>(orkestrate.space)
+    participant Agent as Your Publisher Agent
+    participant LLM as LLM (caller's API key)
+
+    Coder->>GW: MCP request (BYOM config)
+    GW->>GW: Auth, routing,<br/>session management
+    GW->>Agent: POST /your-endpoint<br/>Authorization: Bearer<br/>X-Orkestrate-Action<br/>X-Orkestrate-Model (base64url)
+    Agent->>Agent: verifyRequest()<br/>parseRequest()<br/>buildModel()
+    Agent->>LLM: generateText() (caller's key)
+    LLM-->>Agent: response
+    Agent-->>GW: { reply: "..." }
+    GW-->>Coder: MCP response
 ```
-┌─────────────────┐     ┌────────────────────┐     ┌──────────────────────┐
-│  Coding tool     │     │  Orkestrate Gateway │     │  Your Publisher Agent │
-│  (Cursor, etc.)  │────▶│  (orkestrate.space) │────▶│  (your endpoint)      │
-│                  │     │                     │     │                       │
-│  Brings own API  │     │  Auth, routing,     │     │  verifyRequest()      │
-│  key (BYOM)      │     │  sessions, usage,   │     │  parseRequest()       │
-│                  │     │  rate limiting      │     │  buildModel()         │
-│                  │     │                     │     │  run agent → reply    │
-└─────────────────┘     └────────────────────┘     └──────────────────────┘
-                                                                │
-                                                        ┌───────▼───────┐
-                                                        │  LLM (caller's │
-                                                        │  API key)      │
-                                                        └───────────────┘
 ```
 
 You deploy a single HTTP endpoint. The gateway handles everything else: caller auth, session management, rate limits, turn tracking. Your job is one function: receive a message, run your agent, return a reply.
@@ -90,7 +91,7 @@ export const { GET, POST } = createOrkestrateHandler({
 ### Complete working example (Next.js)
 
 ```ts
-// app/api/orkestrate/route.ts
+// app/orkestrate/route.ts  ← any path you choose
 import { createOrkestrateHandler } from "@orkestrate/sdk";
 import { generateText } from "ai";
 
@@ -108,7 +109,7 @@ export const { GET, POST } = createOrkestrateHandler({
 });
 ```
 
-Deploy this to Vercel, register your endpoint at [orkestrate.space](https://orkestrate.space), and you're live.
+Deploy this to Vercel at any route (e.g. `example.com/orkestrate`), register your endpoint URL at [orkestrate.space](https://orkestrate.space), and you're live.
 
 ## API
 
