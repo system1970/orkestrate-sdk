@@ -91,7 +91,7 @@ export const { GET, POST } = createOrkestrateHandler({
 ### Complete working example (Next.js)
 
 ```ts
-// app/orkestrate/route.ts  ← any path you choose
+// app/api/orkestrate/route.ts  ← must match gateway's path
 import { createOrkestrateHandler } from "@orkestrate/sdk";
 import { generateText } from "ai";
 
@@ -109,7 +109,7 @@ export const { GET, POST } = createOrkestrateHandler({
 });
 ```
 
-Deploy this to Vercel at any route (e.g. `example.com/orkestrate`), register your endpoint URL at [orkestrate.space](https://orkestrate.space), and you're live.
+Deploy this to Vercel, register your domain at [orkestrate.space](https://orkestrate.space), and you're live. The gateway calls `https://<your-domain>/api/orkestrate`.
 
 ## API
 
