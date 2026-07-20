@@ -21,7 +21,7 @@ sequenceDiagram
 
     Coder->>GW: MCP request (BYOM config)
     GW->>GW: Auth, routing,<br/>session management
-    GW->>Agent: POST /your-endpoint<br/>Authorization: Bearer<br/>X-Orkestrate-Action<br/>X-Orkestrate-Model (base64url)
+    GW->>Agent: POST /api/orkestrate<br/>Authorization: Bearer<br/>X-Orkestrate-Action<br/>X-Orkestrate-Model (base64url)
     Agent->>Agent: verifyRequest()<br/>parseRequest()<br/>buildModel()
     Agent->>LLM: generateText() (caller's key)
     LLM-->>Agent: response
