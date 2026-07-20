@@ -1,0 +1,64 @@
+{
+  "name": "@orkestrate/sdk",
+  "version": "0.1.1",
+  "type": "module",
+  "description": "Publisher HTTP handler for Orkestrate — verify, parse, build model, respond. BYOM (Bring Your Own Model) for your agent.",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build && npm test",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.15",
+    "@ai-sdk/google": "^4.0.17",
+    "@ai-sdk/openai": "^4.0.15"
+  },
+  "peerDependencies": {
+    "ai": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "ai": "^7.0.29",
+    "typescript": "~6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/system1970/orkestrate-sdk.git"
+  },
+  "homepage": "https://orkestrate.space",
+  "bugs": {
+    "url": "https://github.com/system1970/orkestrate-sdk/issues"
+  },
+  "keywords": [
+    "orkestrate",
+    "ai",
+    "agent",
+    "gateway",
+    "mcp",
+    "byom",
+    "llm"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}
