@@ -28,7 +28,6 @@ sequenceDiagram
     Agent-->>GW: { reply: "..." }
     GW-->>Coder: MCP response
 ```
-```
 
 You deploy a single HTTP endpoint. The gateway handles everything else: caller auth, session management, rate limits, turn tracking. Your job is one function: receive a message, run your agent, return a reply.
 
