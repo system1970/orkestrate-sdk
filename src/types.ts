@@ -5,14 +5,26 @@ export type OrkestrateAction = "start_session" | "send_message" | "end_session" 
 
 /**
  * Caller model config (BYOM). Sent by the gateway as
- * `X-Orkestrate-Model` (base64url JSON). Built into an AI SDK model for you.
+ * `X-Orkestrate-Model` (base64url JSON).
+ *
+ * The caller's API key is never forwarded — instead, `token` and `gatewayUrl`
+ * let the SDK proxy LLM calls through the gateway, which injects the real key
+ * server-side. Publishers never see the caller's key.
  */
 export type CallerModelConfig = {
   provider: "openai" | "anthropic" | "google" | "custom";
   model: string;
-  apiKey: string;
   /** Required for `custom`; optional override for openai-compatible hosts. */
   baseURL?: string;
+  /** @deprecated Use `token`+`gatewayUrl` instead. Included for legacy wire compatibility. */
+  apiKey?: string;
+  /**
+   * Session-scoped proxy token. When present, `buildModel` routes LLM calls
+   * through the gateway's proxy endpoint instead of using a raw API key.
+   */
+  token?: string;
+  /** Gateway proxy URL. Required when `token` is set. */
+  gatewayUrl?: string;
 };
 
 /** A single turn in the session conversation history. */

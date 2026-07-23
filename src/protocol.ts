@@ -83,8 +83,10 @@ function decodeModelConfig(header: string): CallerModelConfig {
   const o = parsed as Record<string, unknown>;
   const provider = o.provider as string;
   const model = o.model as string;
-  const apiKey = o.apiKey as string;
   const baseURL = o.baseURL as string | undefined;
+  const apiKey = o.apiKey as string | undefined;
+  const token = o.token as string | undefined;
+  const gatewayUrl = o.gatewayUrl as string | undefined;
 
   if (
     provider !== "openai" &&
@@ -102,10 +104,6 @@ function decodeModelConfig(header: string): CallerModelConfig {
     throw new OrkestrateError("BAD_REQUEST", "model.model must be a non-empty string");
   }
 
-  if (typeof apiKey !== "string" || !apiKey) {
-    throw new OrkestrateError("BAD_REQUEST", "model.apiKey must be a non-empty string");
-  }
-
   if (baseURL !== undefined && typeof baseURL !== "string") {
     throw new OrkestrateError("BAD_REQUEST", "model.baseURL must be a string when set");
   }
@@ -114,11 +112,21 @@ function decodeModelConfig(header: string): CallerModelConfig {
     throw new OrkestrateError("BAD_REQUEST", 'model.baseURL is required when provider is "custom"');
   }
 
+  if (token !== undefined && typeof token !== "string") {
+    throw new OrkestrateError("BAD_REQUEST", "model.token must be a string when set");
+  }
+
+  if (gatewayUrl !== undefined && typeof gatewayUrl !== "string") {
+    throw new OrkestrateError("BAD_REQUEST", "model.gatewayUrl must be a string when set");
+  }
+
   return {
     provider,
     model,
-    apiKey,
     ...(typeof baseURL === "string" ? { baseURL } : {}),
+    ...(typeof apiKey === "string" ? { apiKey } : {}),
+    ...(typeof token === "string" ? { token } : {}),
+    ...(typeof gatewayUrl === "string" ? { gatewayUrl } : {}),
   } as CallerModelConfig;
 }
 

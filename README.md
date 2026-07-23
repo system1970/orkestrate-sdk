@@ -13,8 +13,8 @@ The official SDK for building Orkestrate publisher agents.
 [Orkestrate](https://orkestrate.space) is an AI agent gateway. Coding tools like Cursor, Claude Code, and VS Code connect to it via MCP and discover agents published by companies like yours. Callers bring their own model (BYOM) — you just handle the turn.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://mermaid.ink/svg/c2VxdWVuY2VEaWFncmFtCiAgICBwYXJ0aWNpcGFudCBDb2RlciBhcyBDb2RpbmcgdG9vbCAoQ3Vyc29yLCBldGMuKQogICAgcGFydGljaXBhbnQgR1cgYXMgT3JrZXN0cmF0ZSBHYXRld2F5IChvcmtlc3RyYXRlLnNwYWNlKQogICAgcGFydGljaXBhbnQgQWdlbnQgYXMgWW91ciBQdWJsaXNoZXIgQWdlbnQKICAgIHBhcnRpY2lwYW50IExMTSBhcyBMTE0gKGNhbGxlcidzIEFQSSBrZXkpCgogICAgQ29kZXItPj5HVzogTUNQIHJlcXVlc3QgKEJZT00gY29uZmlnKQogICAgR1ctPj5HVzogQXV0aCwgcm91dGluZywgc2Vzc2lvbiBtYW5hZ2VtZW50CiAgICBHVy0-PkFnZW50OiBQT1NUIC9hcGkvb3JrZXN0cmF0ZSBBdXRob3JpemF0aW9uOiBCZWFyZXIgWC1Pcmtlc3RyYXRlLUFjdGlvbiBYLU9ya2VzdHJhdGUtTW9kZWwgKGJhc2U2NHVybCkKICAgIEFnZW50LT4-QWdlbnQ6IHZlcmlmeVJlcXVlc3QoKSBwYXJzZVJlcXVlc3QoKSBidWlsZE1vZGVsKCkKICAgIEFnZW50LT4-TExNOiBnZW5lcmF0ZVRleHQoKSAoY2FsbGVyJ3Mga2V5KQogICAgTExNLS0-PkFnZW50OiByZXNwb25zZQogICAgQWdlbnQtLT4-R1c6IHsgcmVwbHk6ICIuLi4iIH0KICAgIEdXLS0-PkNvZGVyOiBNQ1AgcmVzcG9uc2U?theme=dark">
-  <img alt="Orkestrate architecture diagram" src="https://mermaid.ink/svg/c2VxdWVuY2VEaWFncmFtCiAgICBwYXJ0aWNpcGFudCBDb2RlciBhcyBDb2RpbmcgdG9vbCAoQ3Vyc29yLCBldGMuKQogICAgcGFydGljaXBhbnQgR1cgYXMgT3JrZXN0cmF0ZSBHYXRld2F5IChvcmtlc3RyYXRlLnNwYWNlKQogICAgcGFydGljaXBhbnQgQWdlbnQgYXMgWW91ciBQdWJsaXNoZXIgQWdlbnQKICAgIHBhcnRpY2lwYW50IExMTSBhcyBMTE0gKGNhbGxlcidzIEFQSSBrZXkpCgogICAgQ29kZXItPj5HVzogTUNQIHJlcXVlc3QgKEJZT00gY29uZmlnKQogICAgR1ctPj5HVzogQXV0aCwgcm91dGluZywgc2Vzc2lvbiBtYW5hZ2VtZW50CiAgICBHVy0-PkFnZW50OiBQT1NUIC9hcGkvb3JrZXN0cmF0ZSBBdXRob3JpemF0aW9uOiBCZWFyZXIgWC1Pcmtlc3RyYXRlLUFjdGlvbiBYLU9ya2VzdHJhdGUtTW9kZWwgKGJhc2U2NHVybCkKICAgIEFnZW50LT4-QWdlbnQ6IHZlcmlmeVJlcXVlc3QoKSBwYXJzZVJlcXVlc3QoKSBidWlsZE1vZGVsKCkKICAgIEFnZW50LT4-TExNOiBnZW5lcmF0ZVRleHQoKSAoY2FsbGVyJ3Mga2V5KQogICAgTExNLS0-PkFnZW50OiByZXNwb25zZQogICAgQWdlbnQtLT4-R1c6IHsgcmVwbHk6ICIuLi4iIH0KICAgIEdXLS0-PkNvZGVyOiBNQ1AgcmVzcG9uc2U">
+  <source media="(prefers-color-scheme: dark)" srcset="https://mermaid.ink/svg/c2VxdWVuY2VEaWFncmFtCiAgICBwYXJ0aWNpcGFudCBDb2RlciBhcyBDb2RpbmcgdG9vbCAoQ3Vyc29yLCBldGMuKQogICAgcGFydGljaXBhbnQgR1cgYXMgT3JrZXN0cmF0ZSBHYXRld2F5IChvcmtlc3RyYXRlLnNwYWNlKQogICAgcGFydGljaXBhbnQgQWdlbnQgYXMgWW91ciBQdWJsaXNoZXIgQWdlbnQKICAgIHBhcnRpY2lwYW50IExMTSBhcyBMTE0gKGNhbGxlcidzIEFQSSBrZXkpCgogICAgQ29kZXItPj5HVzogTUNQIHJlcXVlc3QgKEJZT00gY29uZmlnKQogICAgR1ctPj5HVzogQXV0aCwgcm91dGluZywgc2Vzc2lvbiBtYW5hZ2VtZW50CiAgICBHVy0-PkFnZW50OiBQT1NUIC9hcGkvb3JrZXN0cmF0ZSAocHJveHkgdG9rZW4sIG5vIGtleSkKICAgIEFnZW50LT4-QWdlbnQ6IHZlcmlmeVJlcXVlc3QoKSBwYXJzZVJlcXVlc3QoKSBidWlsZE1vZGVsKCkKICAgIEFnZW50LT4-R1c6IFBPU1QgL2FwaS9wcm94eS9sbG0gKHNpZ25lZCB0b2tlbiArIHJlcXVlc3QpCiAgICBHVy0-PkxMTTogZm9yd2FyZCB3aXRoIGNhbGxlcidzIHJlYWwga2V5CiAgICBMTE0tLT4-R1c6IHJlc3BvbnNlCiAgICBHVy0tPj5BZ2VudDogcmVzcG9uc2UKICAgIEFnZW50LS0-PkdXOiB7IHJlcGx5OiAiLi4uIiB9CiAgICBHVy0tPj5Db2RlcjogTUNQIHJlc3BvbnNl?theme=dark">
+  <img alt="Orkestrate architecture diagram" src="https://mermaid.ink/svg/c2VxdWVuY2VEaWFncmFtCiAgICBwYXJ0aWNpcGFudCBDb2RlciBhcyBDb2RpbmcgdG9vbCAoQ3Vyc29yLCBldGMuKQogICAgcGFydGljaXBhbnQgR1cgYXMgT3JrZXN0cmF0ZSBHYXRld2F5IChvcmtlc3RyYXRlLnNwYWNlKQogICAgcGFydGljaXBhbnQgQWdlbnQgYXMgWW91ciBQdWJsaXNoZXIgQWdlbnQKICAgIHBhcnRpY2lwYW50IExMTSBhcyBMTE0gKGNhbGxlcidzIEFQSSBrZXkpCgogICAgQ29kZXItPj5HVzogTUNQIHJlcXVlc3QgKEJZT00gY29uZmlnKQogICAgR1ctPj5HVzogQXV0aCwgcm91dGluZywgc2Vzc2lvbiBtYW5hZ2VtZW50CiAgICBHVy0-PkFnZW50OiBQT1NUIC9hcGkvb3JrZXN0cmF0ZSAocHJveHkgdG9rZW4sIG5vIGtleSkKICAgIEFnZW50LT4-QWdlbnQ6IHZlcmlmeVJlcXVlc3QoKSBwYXJzZVJlcXVlc3QoKSBidWlsZE1vZGVsKCkKICAgIEFnZW50LT4-R1c6IFBPU1QgL2FwaS9wcm94eS9sbG0gKHNpZ25lZCB0b2tlbiArIHJlcXVlc3QpCiAgICBHVy0-PkxMTTogZm9yd2FyZCB3aXRoIGNhbGxlcidzIHJlYWwga2V5CiAgICBMTE0tLT4-R1c6IHJlc3BvbnNlCiAgICBHVy0tPj5BZ2VudDogcmVzcG9uc2UKICAgIEFnZW50LS0-PkdXOiB7IHJlcGx5OiAiLi4uIiB9CiAgICBHVy0tPj5Db2RlcjogTUNQIHJlc3BvbnNl">
 </picture>
 
 <details>
@@ -29,10 +29,12 @@ sequenceDiagram
 
     Coder->>GW: MCP request (BYOM config)
     GW->>GW: Auth, routing, session management
-    GW->>Agent: POST /api/orkestrate Authorization: Bearer X-Orkestrate-Action X-Orkestrate-Model (base64url)
+    GW->>Agent: POST /api/orkestrate (proxy token, no key)
     Agent->>Agent: verifyRequest() parseRequest() buildModel()
-    Agent->>LLM: generateText() (caller's key)
-    LLM-->>Agent: response
+    Agent->>GW: POST /api/proxy/llm (signed token + request)
+    GW->>LLM: forward with caller's real key
+    LLM-->>GW: response
+    GW-->>Agent: response
     Agent-->>GW: { reply: "..." }
     GW-->>Coder: MCP response
 ```
@@ -43,7 +45,7 @@ You deploy a single HTTP endpoint. The gateway handles everything else: caller a
 
 ## Why use this SDK?
 
-- **Stop managing multi-tenant API keys.** Callers bring their own. You never pay for inference.
+- **Caller's API key never reaches your server.** LLM calls are proxied through the gateway with scoped tokens. No key logging, no exfiltration.
 - **No session infrastructure to build.** Gateway mints session ids, enforces TTLs, stores history.
 - **One import, any framework.** Primitives for bare-bones handlers, convenience wrapper for AI SDK users.
 - **BYOM works out of the box.** OpenAI, Anthropic, Google, or any OpenAI-compatible provider.
@@ -136,7 +138,7 @@ Decodes gateway headers + body into a typed `ParsedRequest`:
 | `action` | `X-Orkestrate-Action` | `start_session` / `send_message` / `end_session` / `ping` |
 | `sessionId` | `X-Orkestrate-Session-Id` | Gateway-minted session id |
 | `callerId` | `X-Orkestrate-Caller-Id` | Opaque caller identifier (optional) |
-| `modelConfig` | `X-Orkestrate-Model` | Base64url JSON — provider, model, apiKey, baseURL? |
+| `modelConfig` | `X-Orkestrate-Model` | Base64url JSON — provider, model, baseURL?, gatewayUrl, token |
 | `message` | body | Latest user message text |
 | `messages` | body | Full conversation history |
 

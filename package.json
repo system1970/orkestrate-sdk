@@ -1,6 +1,6 @@
 {
   "name": "@orkestrate/sdk",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
   "description": "Publisher HTTP handler for Orkestrate — verify, parse, build model, respond. BYOM (Bring Your Own Model) for your agent.",
   "license": "MIT",
