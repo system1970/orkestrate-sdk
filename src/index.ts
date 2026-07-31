@@ -19,7 +19,7 @@
 
 /* Primitives */
 export { verifyRequest } from "./auth";
-export { parseRequest, encodeModelConfig } from "./protocol";
+export { parseRequest, parseMessages, encodeModelConfig } from "./protocol";
 export { buildModel } from "./model";
 export { respond, OrkestrateError } from "./errors";
 export type { OrkestrateErrorCode } from "./errors";

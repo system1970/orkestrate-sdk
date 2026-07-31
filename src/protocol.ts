@@ -6,6 +6,12 @@ export const HEADER_ACTION = "x-orkestrate-action";
 export const HEADER_CALLER_ID = "x-orkestrate-caller-id";
 export const HEADER_MODEL = "x-orkestrate-model";
 
+/** Max request body size (bytes) — bounds memory usage from hostile input. */
+export const MAX_BODY_BYTES = 256 * 1024;
+
+/** Max number of messages allowed in a single request body. */
+export const MAX_MESSAGES = 100;
+
 const ACTIONS = new Set<OrkestrateAction>([
   "start_session",
   "send_message",
@@ -30,8 +36,22 @@ export async function parseRequest(request: Request): Promise<ParsedRequest> {
   const sessionId = request.headers.get(HEADER_SESSION_ID)?.trim() || undefined;
   const callerId = request.headers.get(HEADER_CALLER_ID)?.trim() || undefined;
 
+  const contentLength = Number(request.headers.get("content-length") ?? 0);
+  if (contentLength > MAX_BODY_BYTES) {
+    throw new OrkestrateError(
+      "BAD_REQUEST",
+      `Request body exceeds ${MAX_BODY_BYTES} bytes`,
+    );
+  }
+
   let body: Record<string, unknown> = {};
   const text = await request.text();
+  if (Buffer.byteLength(text, "utf8") > MAX_BODY_BYTES) {
+    throw new OrkestrateError(
+      "BAD_REQUEST",
+      `Request body exceeds ${MAX_BODY_BYTES} bytes`,
+    );
+  }
   if (text.trim()) {
     try {
       body = JSON.parse(text);
@@ -143,6 +163,13 @@ export function parseMessages(raw: unknown, message?: string): SessionMessage[] 
     throw new OrkestrateError(
       "BAD_REQUEST",
       "Body.messages must be a non-empty array of { role, content }",
+    );
+  }
+
+  if (raw.length > MAX_MESSAGES) {
+    throw new OrkestrateError(
+      "BAD_REQUEST",
+      `Body.messages exceeds ${MAX_MESSAGES} entries`,
     );
   }
 

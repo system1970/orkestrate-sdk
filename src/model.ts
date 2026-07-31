@@ -10,6 +10,31 @@ import type { CallerModelConfig } from "./types";
  * gateway proxy. The caller's API key stays server-side — the publisher
  * never sees it.
  */
+/** Headers the gateway re-injects server-side; never forward these. */
+const AUTH_HEADERS_TO_STRIP = new Set([
+  "authorization",
+  "x-api-key",
+  "x-goog-api-key",
+  "api-key",
+  "anthropic-api-key",
+]);
+
+/**
+ * Forward provider-specific request headers (e.g. `anthropic-version`) to the
+ * gateway proxy while stripping auth headers — the gateway injects the real
+ * API key server-side.
+ */
+function proxyHeaders(request: Request): HeadersInit {
+  const headers: Record<string, string> = {};
+  request.headers.forEach((value, key) => {
+    const lower = key.toLowerCase();
+    if (AUTH_HEADERS_TO_STRIP.has(lower)) return;
+    if (lower.startsWith("x-orkestrate-")) return;
+    headers[key] = value;
+  });
+  return headers;
+}
+
 function proxyFetch(
   gatewayUrl: string,
   token: string,
@@ -22,7 +47,7 @@ function proxyFetch(
     return fetch(proxyEndpoint, {
       method: "POST",
       headers: {
-        "Content-Type": request.headers.get("content-type") || "application/json",
+        ...proxyHeaders(request),
         "X-Orkestrate-Proxy-Token": token,
         "X-Orkestrate-Original-Url": request.url,
       },

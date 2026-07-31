@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { encodeModelConfig, respond, OrkestrateError } from "./index";
+import { encodeModelConfig, respond, OrkestrateError, parseRequest, parseMessages } from "./index";
+import { MAX_BODY_BYTES, MAX_MESSAGES } from "./protocol";
 import type { CallerModelConfig } from "./types";
 
 describe("encodeModelConfig", () => {
@@ -46,5 +47,40 @@ describe("OrkestrateError", () => {
     expect(err.code).toBe("BAD_REQUEST");
     expect(err.status).toBe(400);
     expect(err.message).toBe("Invalid");
+  });
+});
+
+describe("parseMessages", () => {
+  it("rejects a messages array larger than MAX_MESSAGES", () => {
+    const big = Array.from({ length: MAX_MESSAGES + 1 }, (_, i) => ({
+      role: "user" as const,
+      content: `m${i}`,
+    }));
+    expect(() => parseMessages(big, big[big.length - 1].content)).toThrowError(
+      /exceeds/,
+    );
+  });
+
+  it("accepts messages up to MAX_MESSAGES", () => {
+    const msgs = Array.from({ length: MAX_MESSAGES }, (_, i) => ({
+      role: "user" as const,
+      content: `m${i}`,
+    }));
+    expect(parseMessages(msgs, msgs[msgs.length - 1].content).length).toBe(MAX_MESSAGES);
+  });
+});
+
+describe("parseRequest", () => {
+  it("rejects an oversized content-length header", async () => {
+    const req = new Request("http://localhost/api/orkestrate", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-orkestrate-action": "ping",
+        "content-length": String(MAX_BODY_BYTES + 1),
+      },
+      body: "{}",
+    });
+    await expect(parseRequest(req)).rejects.toThrow(OrkestrateError);
   });
 });
