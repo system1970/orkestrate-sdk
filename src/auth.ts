@@ -1,11 +1,17 @@
-import { timingSafeEqual } from "node:crypto";
 import { OrkestrateError } from "./errors";
+import { utf8Bytes } from "./encoding";
 
 /**
  * Verify that `request` carries a valid `Authorization: Bearer <secret>`.
  * Throws `OrkestrateError("UNAUTHORIZED")` on failure.
+ *
+ * Uses Web Crypto (SHA-256 hash-then-compare) so it runs on Node.js, the
+ * Next.js Edge Runtime, and Cloudflare Workers.
  */
-export function verifyRequest(request: Request, secret: string): void {
+export async function verifyRequest(
+  request: Request,
+  secret: string,
+): Promise<void> {
   if (!secret) {
     throw new OrkestrateError("INTERNAL", "Publisher secret is not configured", 500);
   }
@@ -21,28 +27,28 @@ export function verifyRequest(request: Request, secret: string): void {
   }
 
   const token = match[1].trim();
-  if (!secretsEqual(token, secret)) {
+  if (!(await secretsEqual(token, secret))) {
     throw new OrkestrateError("UNAUTHORIZED", "Invalid secret");
   }
 }
 
 /**
- * Constant-time comparison of two strings.
+ * Constant-time comparison via SHA-256 digest compare.
  *
- * On length mismatch we compare `a` against itself so that callers cannot
- * distinguish "wrong length" from "wrong content" by timing alone. The
- * branch (return false vs. continue) still leaks ~1 bit — acceptable for a
- * shared-secret check against remote timing noise but not for password
- * hashing.
+ * Both inputs hash to 32 bytes, so the comparison loop always runs the same
+ * number of iterations regardless of input length or content. The digest
+ * approach also avoids leaking length information through early exit.
  */
-function secretsEqual(a: string, b: string): boolean {
-  const aBuf = Buffer.from(a, "utf8");
-  const bBuf = Buffer.from(b, "utf8");
-
-  if (aBuf.length !== bBuf.length) {
-    timingSafeEqual(aBuf, aBuf);
-    return false;
+async function secretsEqual(a: string, b: string): Promise<boolean> {
+  const [aDigest, bDigest] = await Promise.all([
+    crypto.subtle.digest("SHA-256", utf8Bytes(a)),
+    crypto.subtle.digest("SHA-256", utf8Bytes(b)),
+  ]);
+  const aa = new Uint8Array(aDigest);
+  const bb = new Uint8Array(bDigest);
+  let diff = 0;
+  for (let i = 0; i < aa.length; i++) {
+    diff |= aa[i]! ^ bb[i]!;
   }
-
-  return timingSafeEqual(aBuf, bBuf);
+  return diff === 0;
 }

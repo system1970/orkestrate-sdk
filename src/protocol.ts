@@ -1,5 +1,6 @@
 import { OrkestrateError } from "./errors";
 import type { CallerModelConfig, OrkestrateAction, ParsedRequest, SessionMessage } from "./types";
+import { base64UrlDecode, base64UrlEncode, utf8ByteLength, utf8Bytes, utf8Decode } from "./encoding";
 
 export const HEADER_SESSION_ID = "x-orkestrate-session-id";
 export const HEADER_ACTION = "x-orkestrate-action";
@@ -46,7 +47,7 @@ export async function parseRequest(request: Request): Promise<ParsedRequest> {
 
   let body: Record<string, unknown> = {};
   const text = await request.text();
-  if (Buffer.byteLength(text, "utf8") > MAX_BODY_BYTES) {
+  if (utf8ByteLength(text) > MAX_BODY_BYTES) {
     throw new OrkestrateError(
       "BAD_REQUEST",
       `Request body exceeds ${MAX_BODY_BYTES} bytes`,
@@ -84,7 +85,7 @@ export async function parseRequest(request: Request): Promise<ParsedRequest> {
 function decodeModelConfig(header: string): CallerModelConfig {
   let json: string;
   try {
-    json = Buffer.from(header, "base64url").toString("utf8");
+    json = utf8Decode(base64UrlDecode(header));
   } catch {
     throw new OrkestrateError("BAD_REQUEST", `${HEADER_MODEL} must be base64url-encoded JSON`);
   }
@@ -212,5 +213,5 @@ export function parseMessages(raw: unknown, message?: string): SessionMessage[] 
 
 /** Encode model config for tests / gateway. Never log the result. */
 export function encodeModelConfig(config: CallerModelConfig): string {
-  return Buffer.from(JSON.stringify(config), "utf8").toString("base64url");
+  return base64UrlEncode(utf8Bytes(JSON.stringify(config)));
 }

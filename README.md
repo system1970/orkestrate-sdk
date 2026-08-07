@@ -66,7 +66,7 @@ npm install @orkestrate/sdk ai
 import { verifyRequest, parseRequest, buildModel, respond } from "@orkestrate/sdk";
 
 async function handler(request: Request) {
-  verifyRequest(request, process.env.ORKESTRATE_SECRET!);
+  await verifyRequest(request, process.env.ORKESTRATE_SECRET!);
   const { action, sessionId, message, modelConfig, messages } =
     await parseRequest(request);
 
@@ -127,7 +127,9 @@ Deploy this to Vercel, register your domain at [orkestrate.space](https://orkest
 ### `verifyRequest(request, secret)`
 
 Authenticates the gateway request via `Authorization: Bearer <secret>`.  
-Throws `OrkestrateError("UNAUTHORIZED")` on failure.
+Throws `OrkestrateError("UNAUTHORIZED")` on failure. Async — uses Web Crypto
+(SHA-256 hash-then-compare), so it runs on Node.js, the Next.js Edge Runtime,
+and Cloudflare Workers:
 
 ### `parseRequest(request)`
 

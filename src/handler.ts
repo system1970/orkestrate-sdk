@@ -33,7 +33,7 @@ export function createOrkestrateHandler(
 
   async function POST(request: Request): Promise<Response> {
     try {
-      verifyRequest(request, secret);
+      await verifyRequest(request, secret);
       const parsed = await parseRequest(request);
 
       switch (parsed.action) {
