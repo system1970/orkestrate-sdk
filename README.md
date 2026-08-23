@@ -54,9 +54,13 @@ You deploy a single HTTP endpoint. The gateway handles everything else: caller a
 
 ```bash
 npm install @orkestrate/sdk ai
+# pnpm: pnpm add @orkestrate/sdk ai
+# bun:  bun add @orkestrate/sdk ai
 ```
 
-`ai` (Vercel AI SDK) is a peer dependency — required for `buildModel` and `createOrkestrateHandler`. If you only use `verifyRequest` and `parseRequest`, you can ignore the peer dep warning.
+`ai` (Vercel AI SDK `^7.0.0`) is a peer dependency. `@orkestrate/sdk` gives you `verifyRequest`, `parseRequest`, `buildModel`, `createOrkestrateHandler` and the three provider adapters (`@ai-sdk/openai/anthropic/google`). `ai` gives you `generateText`, `streamText`, `tool` and `LanguageModel` — the thing `buildModel` returns and `generateText` consumes. Keep them as peers so you control the `ai` version and avoid duplicate installs (same reason `ai` itself keeps `zod` as a peer).
+
+If you only use `verifyRequest` + `parseRequest` (no `buildModel`/`createOrkestrateHandler`), you can ignore the `ai` peer warning.
 
 ## Quick start
 
