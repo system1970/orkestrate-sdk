@@ -1,21 +1,29 @@
 /**
  * Client module for delivering work orders and alerts into Orkestrate Inbox.
+ * Sender identity and verified domain are derived automatically on the server
+ * from the authenticated ORKESTRATE_SECRET or Delivery Grant.
  */
 
 export interface InboxSendOptions {
+  /** Recipient inbox address, e.g. "user@orkestrate.space" */
   to: string;
-  from?: string;
-  issuerDomain?: string;
-  issuerName?: string;
+  /** Work order type */
   type: "attention" | "decision" | "question" | "work_order" | "microapp" | "update";
-  urgency?: "routine" | "important" | "critical";
-  title?: string;
-  subject?: string;
+  /** Subject line or title */
+  title: string;
+  /** Plain text or markdown description */
   description?: string;
+  /** Priority level */
+  urgency?: "routine" | "important" | "critical";
+  /** Why this item was triggered */
   reason?: string;
+  /** Structured choices for "decision" items */
   options?: Array<{ id: string; label: string; description?: string; recommended?: boolean }>;
+  /** Diagnostic logs or diffs for "attention" items */
   evidence?: Array<{ type: string; title: string; reference?: string; data?: any }>;
+  /** Webhook URL where Orkestrate posts the signed resolution receipt */
   callbackUrl?: string;
+  /** Embedded microapp configuration */
   microapp?: { appId: string; url?: string; suggestedAction?: string };
 }
 
@@ -36,28 +44,10 @@ export class Orkestrate {
   readonly inbox = {
     send: async (payload: InboxSendOptions) => {
       const url = `${this.baseUrl}/api/inbox/send`;
-      const finalTitle = payload.title || payload.subject;
-      if (!finalTitle) {
-        throw new Error("Missing required field: title or subject");
+
+      if (!payload.title || !payload.type || !payload.to) {
+        throw new Error("Missing required fields: to, type, title");
       }
-
-      const domain = payload.issuerDomain || (payload.from && payload.from.includes("@") ? payload.from.split("@")[1] : "orkestrate.space");
-
-      const body = {
-        to: payload.to,
-        issuerDomain: domain,
-        issuerName: payload.issuerName || domain,
-        issuerEmail: payload.from,
-        type: payload.type,
-        urgency: payload.urgency || "routine",
-        title: finalTitle,
-        description: payload.description || "",
-        reason: payload.reason,
-        options: payload.options,
-        evidence: payload.evidence,
-        callbackUrl: payload.callbackUrl,
-        microapp: payload.microapp
-      };
 
       const res = await fetch(url, {
         method: "POST",
@@ -65,7 +55,7 @@ export class Orkestrate {
           "Content-Type": "application/json",
           ...(this.secret ? { "Authorization": `Bearer ${this.secret}` } : {})
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(payload)
       });
 
       if (!res.ok) {

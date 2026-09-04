@@ -135,9 +135,9 @@ import { Orkestrate } from "@orkestrate/sdk";
 
 const orkestrate = new Orkestrate({ secret: process.env.ORKESTRATE_SECRET });
 
+// Sender identity and domain are resolved automatically on the server from your ORKESTRATE_SECRET
 await orkestrate.inbox.send({
   to: "user@orkestrate.space",
-  from: "billing@yourproduct.com",
   type: "decision",
   title: "Annual subscription renewal due",
   description: "3 inactive seats detected. Trim to save $70/mo.",
