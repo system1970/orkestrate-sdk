@@ -126,6 +126,29 @@ export const { GET, POST } = createOrkestrateHandler({
 
 Deploy this to Vercel, register your domain at [orkestrate.space](https://orkestrate.space), and you're live. The gateway calls `https://<your-domain>/api/orkestrate`.
 
+### Inbox delivery (push work orders)
+
+Send structured, machine-actionable decisions, questions, and alerts directly into a user's Orkestrate Inbox:
+
+```ts
+import { Orkestrate } from "@orkestrate/sdk";
+
+const orkestrate = new Orkestrate({ secret: process.env.ORKESTRATE_SECRET });
+
+await orkestrate.inbox.send({
+  to: "user@orkestrate.space",
+  from: "billing@yourproduct.com",
+  type: "decision",
+  title: "Annual subscription renewal due",
+  description: "3 inactive seats detected. Trim to save $70/mo.",
+  options: [
+    { id: "keep", label: "Keep current plan ($199/mo)" },
+    { id: "trim", label: "Trim unused seats ($129/mo)", recommended: true }
+  ],
+  callbackUrl: "https://yourproduct.com/api/orkestrate/webhook"
+});
+```
+
 ## API
 
 ### `verifyRequest(request, secret)`

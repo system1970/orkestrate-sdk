@@ -1,6 +1,6 @@
-import { OrkestrateError } from "./errors";
-import type { CallerModelConfig, OrkestrateAction, ParsedRequest, SessionMessage } from "./types";
-import { base64UrlDecode, base64UrlEncode, utf8ByteLength, utf8Bytes, utf8Decode } from "./encoding";
+import { OrkestrateError } from "./errors.js";
+import type { CallerModelConfig, OrkestrateAction, ParsedRequest, SessionMessage } from "./types.js";
+import { base64UrlDecode, base64UrlEncode, utf8ByteLength, utf8Bytes, utf8Decode } from "./encoding.js";
 
 export const HEADER_SESSION_ID = "x-orkestrate-session-id";
 export const HEADER_ACTION = "x-orkestrate-action";

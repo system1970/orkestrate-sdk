@@ -2,8 +2,8 @@ import type { LanguageModel } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
-import { OrkestrateError } from "./errors";
-import type { CallerModelConfig } from "./types";
+import { OrkestrateError } from "./errors.js";
+import type { CallerModelConfig } from "./types.js";
 
 /**
  * Build a custom fetch that routes LLM API calls through the Orkestrate

@@ -1,5 +1,5 @@
-import { OrkestrateError } from "./errors";
-import { utf8Bytes } from "./encoding";
+import { OrkestrateError } from "./errors.js";
+import { utf8Bytes } from "./encoding.js";
 
 /**
  * Verify that `request` carries a valid `Authorization: Bearer <secret>`.

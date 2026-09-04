@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { encodeModelConfig, respond, OrkestrateError, parseRequest, parseMessages } from "./index";
-import { MAX_BODY_BYTES, MAX_MESSAGES } from "./protocol";
-import type { CallerModelConfig } from "./types";
+import { encodeModelConfig, respond, OrkestrateError, parseRequest, parseMessages } from "./index.js";
+import { MAX_BODY_BYTES, MAX_MESSAGES } from "./protocol.js";
+import type { CallerModelConfig } from "./types.js";
 
 describe("encodeModelConfig", () => {
   it("encodes a valid config to base64url", () => {
@@ -82,5 +82,13 @@ describe("parseRequest", () => {
       body: "{}",
     });
     await expect(parseRequest(req)).rejects.toThrow(OrkestrateError);
+  });
+});
+
+describe("Orkestrate inbox client", () => {
+  it("initializes with default options", async () => {
+    const { Orkestrate } = await import("./inbox.js");
+    const client = new Orkestrate();
+    expect(client.baseUrl).toBe("https://orkestrate.space");
   });
 });

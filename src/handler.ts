@@ -1,9 +1,9 @@
-import { verifyRequest } from "./auth";
-import { OrkestrateError, toErrorResponse } from "./errors";
-import { buildModel } from "./model";
-import { parseRequest } from "./protocol";
-import { respond } from "./errors";
-import type { CreateOrkestrateHandlerOptions, OrkestrateHandlers } from "./types";
+import { verifyRequest } from "./auth.js";
+import { OrkestrateError, toErrorResponse } from "./errors.js";
+import { buildModel } from "./model.js";
+import { parseRequest } from "./protocol.js";
+import { respond } from "./errors.js";
+import type { CreateOrkestrateHandlerOptions, OrkestrateHandlers } from "./types.js";
 
 const PROTOCOL_VERSION = 1;
 
