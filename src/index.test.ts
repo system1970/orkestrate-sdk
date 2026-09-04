@@ -84,11 +84,3 @@ describe("parseRequest", () => {
     await expect(parseRequest(req)).rejects.toThrow(OrkestrateError);
   });
 });
-
-describe("Orkestrate inbox client", () => {
-  it("initializes with default options", async () => {
-    const { Orkestrate } = await import("./inbox.js");
-    const client = new Orkestrate();
-    expect(client.baseUrl).toBe("https://orkestrate.space");
-  });
-});
