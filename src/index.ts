@@ -17,9 +17,32 @@
  *   TurnResult, CreateOrkestrateHandlerOptions, OrkestrateHandlers, OrkestrateAction
  */
 
+/* Bounded inference (grants + DPoP-bound execution) */
+export {
+  BoundedExecutor,
+  createOperationId,
+  requestIdForOperation,
+  signDpopProof,
+  executorHtu,
+} from "./inference.js";
+export type {
+  BoundedExecutorOptions,
+  BoundedExecutionBody,
+  BoundedExecutionResult,
+  DpopSignInput,
+} from "./inference.js";
+export { createBoundedFetch } from "./bounded-fetch.js";
+export type { BoundedFetchOptions } from "./bounded-fetch.js";
+
 /* Primitives */
 export { verifyRequest } from "./auth.js";
 export { parseRequest, parseMessages, encodeModelConfig } from "./protocol.js";
+export {
+  encodeBoundedEnvelope,
+  decodeBoundedEnvelope,
+  HEADER_BOUNDED,
+} from "./protocol.js";
+export type { BoundedEnvelope } from "./protocol.js";
 export { buildModel } from "./model.js";
 export { respond, OrkestrateError } from "./errors.js";
 export type { OrkestrateErrorCode } from "./errors.js";
@@ -28,7 +51,6 @@ export type { OrkestrateErrorCode } from "./errors.js";
 export { createOrkestrateHandler } from "./handler.js";
 export type {
   CallerModelConfig,
-  CloseContext,
   CreateOrkestrateHandlerOptions,
   OrkestrateAction,
   OrkestrateHandlers,

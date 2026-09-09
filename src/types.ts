@@ -1,4 +1,5 @@
 import type { LanguageModel } from "ai";
+import type { BoundedEnvelope } from "./protocol.js";
 
 /** Actions the gateway may send on POST. */
 export type OrkestrateAction = "start_session" | "send_message" | "end_session" | "ping";
@@ -40,6 +41,8 @@ export type ParsedRequest = {
   callerId?: string;
   message?: string;
   modelConfig?: CallerModelConfig;
+  /** Bounded grant envelope (present instead of modelConfig on bounded turns). */
+  bounded?: BoundedEnvelope;
   /** Full conversation history, including the latest user message. */
   messages?: SessionMessage[];
 };
@@ -51,8 +54,14 @@ export type TurnContext = {
   message: string;
   /** Full conversation history including the latest user turn. */
   messages: SessionMessage[];
-  /** Ready for `generateText` / `streamText` / agents. */
-  model: LanguageModel;
+  /**
+   * Ready for `generateText` / `streamText` / agents — present on BYOM turns.
+   * Absent on bounded turns, where the publisher builds its model from
+   * `bounded` (executor URL + grant credential) instead.
+   */
+  model?: LanguageModel;
+  /** Bounded grant envelope (present instead of a built model on bounded turns). */
+  bounded?: BoundedEnvelope;
   action: "start_session" | "send_message";
   /** Opaque Clerk user id when the gateway sends it. */
   callerId?: string;

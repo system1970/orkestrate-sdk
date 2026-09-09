@@ -58,14 +58,14 @@ export function createOrkestrateHandler(
           if (!parsed.message) {
             return respond.error("BAD_REQUEST", "Missing message");
           }
-          if (!parsed.modelConfig) {
+          if (!parsed.modelConfig && !parsed.bounded) {
             return respond.error("BAD_REQUEST", "Missing caller model config");
           }
           if (!parsed.messages || parsed.messages.length === 0) {
             return respond.error("BAD_REQUEST", "Missing or empty messages");
           }
 
-          const model = buildModel(parsed.modelConfig);
+          const model = parsed.modelConfig ? buildModel(parsed.modelConfig) : undefined;
 
           let result: Awaited<ReturnType<typeof onTurn>>;
           try {
@@ -74,6 +74,7 @@ export function createOrkestrateHandler(
               message: parsed.message,
               messages: parsed.messages,
               model,
+              bounded: parsed.bounded,
               action: parsed.action,
               callerId: parsed.callerId,
             });

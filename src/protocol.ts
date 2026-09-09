@@ -6,6 +6,43 @@ export const HEADER_SESSION_ID = "x-orkestrate-session-id";
 export const HEADER_ACTION = "x-orkestrate-action";
 export const HEADER_CALLER_ID = "x-orkestrate-caller-id";
 export const HEADER_MODEL = "x-orkestrate-model";
+/** Bounded-consultation grant envelope (replaces the BYOM model header). */
+export const HEADER_BOUNDED = "x-orkestrate-bounded";
+
+/**
+ * Bounded grant envelope: executor URL + DPoP-bound credential + approved
+ * model + grant id. The credential is useless without proof-of-possession of
+ * the publisher key; it never authorizes spending by itself.
+ */
+export type BoundedEnvelope = {
+  executorUrl: string;
+  credential: string;
+  model: string;
+  grantId: string;
+};
+
+export function encodeBoundedEnvelope(envelope: BoundedEnvelope): string {
+  return base64UrlEncode(utf8Bytes(JSON.stringify(envelope)));
+}
+
+export function decodeBoundedEnvelope(header: string): BoundedEnvelope {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(utf8Decode(base64UrlDecode(header)));
+  } catch {
+    throw new OrkestrateError("BAD_REQUEST", "Invalid bounded grant envelope");
+  }
+  const o = parsed as Partial<BoundedEnvelope>;
+  if (
+    typeof o.executorUrl !== "string" || !o.executorUrl ||
+    typeof o.credential !== "string" || !o.credential ||
+    typeof o.model !== "string" || !o.model ||
+    typeof o.grantId !== "string" || !o.grantId
+  ) {
+    throw new OrkestrateError("BAD_REQUEST", "Invalid bounded grant envelope");
+  }
+  return o as BoundedEnvelope;
+}
 
 /** Max request body size (bytes) — bounds memory usage from hostile input. */
 export const MAX_BODY_BYTES = 256 * 1024;
@@ -74,12 +111,18 @@ export async function parseRequest(request: Request): Promise<ParsedRequest> {
     modelConfig = decodeModelConfig(modelHeader);
   }
 
+  let bounded: BoundedEnvelope | undefined;
+  const boundedHeader = request.headers.get(HEADER_BOUNDED)?.trim();
+  if (boundedHeader) {
+    bounded = decodeBoundedEnvelope(boundedHeader);
+  }
+
   let messages: SessionMessage[] | undefined;
   if (action === "start_session" || action === "send_message") {
     messages = parseMessages(record.messages, message);
   }
 
-  return { action, sessionId, callerId, message, modelConfig, messages };
+  return { action, sessionId, callerId, message, modelConfig, bounded, messages };
 }
 
 function decodeModelConfig(header: string): CallerModelConfig {
