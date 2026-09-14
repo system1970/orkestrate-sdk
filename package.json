@@ -30,7 +30,7 @@
     "@ai-sdk/anthropic": "^4.0.15",
     "@ai-sdk/google": "^4.0.17",
     "@ai-sdk/openai": "^4.0.15",
-    "jose": "^5.10.0"
+    "jose": "^6.2.12"
   },
   "peerDependencies": {
     "ai": "^7.0.0"
